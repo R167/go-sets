@@ -16,8 +16,8 @@ var splits = []struct {
 	{10, 100},
 }
 
-func makeSet(n int) sets.Unordered[int] {
-	s := make(sets.Unordered[int], n)
+func makeSet(n int) sets.Set[int] {
+	s := make(sets.Set[int], n)
 	for i := 0; i < n; i++ {
 		s[i] = struct{}{}
 	}
