@@ -24,16 +24,17 @@ import (
 )
 
 func main() {
-  a := sets.NewSet(1, 2, 3)
-  b := sets.NewSet(3, 4, 5)
+  a := sets.New(1, 2, 3)
+  b := sets.New(3, 4, 5)
 
   fmt.Println(a.Union(b)) // {1, 2, 3, 4, 5}
-  fmt.Println(a.Intersection(b)) // {3}
+  fmt.Println(a.Intersect(b)) // {3}
   fmt.Println(a.Difference(b)) // {1, 2}
-  fmt.Println(a.Subset(b)) // false
-  fmt.Println(a.ProperSubset(b)) // false
-  fmt.Println(a.Superset(b)) // false
-  fmt.Println(a.ProperSuperset(b)) // false
-  fmt.Println(a.Equality(b)) // false
+
+  a2 := sets.New(1, 2)
+  fmt.Println(a2.Subset(a)) // true
+  fmt.Println(a2.ProperSubset(a)) // true
+  fmt.Println(a.Subset(a)) // false
+  fmt.Println(a.Equal(b)) // false
 }
 ```

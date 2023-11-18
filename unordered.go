@@ -2,24 +2,24 @@ package sets
 
 import "fmt"
 
-// Set is a set of comparable elements of type E. Note since Set is backed by a map,
-// the zero value of Set is not an empty set. Use New[E]() to create an empty set.
+// Unordered is a set of comparable elements of type E. Note since Unordered is backed by a map,
+// the zero value of Unordered is not an empty set. Use New[E]() to create an empty set.
 //
-// Set is not thread-safe.
-type Set[E comparable] map[E]struct{}
+// Unordered is not thread-safe.
+type Unordered[E comparable] map[E]struct{}
 
 // New returns a new set containing the given elements.
-func New[E comparable](elements ...E) Set[E] {
-	s := make(Set[E], len(elements))
+func New[E comparable](elements ...E) Unordered[E] {
+	s := make(Unordered[E], len(elements))
 	for _, e := range elements {
 		s[e] = struct{}{}
 	}
 	return s
 }
 
-// FromMap returns a new set containing the keys of the given map.
-func FromMap[E comparable, T any, M ~map[E]T](m M) Set[E] {
-	s := make(Set[E], len(m))
+// FromMap returns a new Unordered set containing the keys of the given map.
+func FromMap[E comparable, T any, M ~map[E]T](m M) Unordered[E] {
+	s := make(Unordered[E], len(m))
 	for e := range m {
 		s[e] = struct{}{}
 	}
@@ -27,12 +27,12 @@ func FromMap[E comparable, T any, M ~map[E]T](m M) Set[E] {
 }
 
 // Add adds the given element to s.
-func (s Set[E]) Add(e E) {
+func (s Unordered[E]) Add(e E) {
 	s[e] = struct{}{}
 }
 
 // Remove removes the given element from s. Returns true if the element was in s.
-func (s Set[E]) Remove(e E) bool {
+func (s Unordered[E]) Remove(e E) bool {
 	if _, ok := s[e]; ok {
 		delete(s, e)
 		return true
@@ -41,7 +41,7 @@ func (s Set[E]) Remove(e E) bool {
 }
 
 // Contains returns true if e is in s.
-func (s Set[E]) Contains(e E) bool {
+func (s Unordered[E]) Contains(e E) bool {
 	_, ok := s[e]
 	return ok
 }
@@ -52,7 +52,7 @@ func (s Set[E]) Contains(e E) bool {
 //	other := New[int](3, 4, 5)
 //	union := s.Union(other)
 //	// union contains 1, 2, 3, 4, 5
-func (s Set[E]) Union(other Set[E]) Set[E] {
+func (s Unordered[E]) Union(other Unordered[E]) Unordered[E] {
 	if len(s) > len(other) {
 		s, other = other, s
 	}
@@ -69,11 +69,11 @@ func (s Set[E]) Union(other Set[E]) Set[E] {
 //	other := New[int](3, 4, 5)
 //	intersection := s.Intersect(other)
 //	// intersection contains 3
-func (s Set[E]) Intersect(other Set[E]) Set[E] {
+func (s Unordered[E]) Intersect(other Unordered[E]) Unordered[E] {
 	if len(s) > len(other) {
 		s, other = other, s
 	}
-	intersection := make(Set[E])
+	intersection := make(Unordered[E])
 	for e := range s {
 		if other.Contains(e) {
 			intersection.Add(e)
@@ -90,7 +90,7 @@ func (s Set[E]) Intersect(other Set[E]) Set[E] {
 //	// contains 1, 2
 //	otherMinusS := other.Difference(s)
 //	// contains 4, 5
-func (s Set[E]) Difference(other Set[E]) Set[E] {
+func (s Unordered[E]) Difference(other Unordered[E]) Unordered[E] {
 	difference := New[E]()
 	for e := range s {
 		if !other.Contains(e) {
@@ -101,7 +101,7 @@ func (s Set[E]) Difference(other Set[E]) Set[E] {
 }
 
 // Equal returns true if s and other contain all the same elements.
-func (s Set[E]) Equal(other Set[E]) bool {
+func (s Unordered[E]) Equal(other Unordered[E]) bool {
 	if len(s) != len(other) {
 		return false
 	}
@@ -116,7 +116,7 @@ func (s Set[E]) Equal(other Set[E]) bool {
 // Slice returns a slice of all the elements in s.
 //
 // Note: The order of the output elements is undefined.
-func (s Set[E]) Slice() []E {
+func (s Unordered[E]) Slice() []E {
 	slice := make([]E, 0, len(s))
 	for e := range s {
 		slice = append(slice, e)
@@ -125,15 +125,15 @@ func (s Set[E]) Slice() []E {
 }
 
 // String returns a string representation of s.
-func (s Set[E]) String() string {
+func (s Unordered[E]) String() string {
 	return fmt.Sprintf("Set%v", s.Slice())
 }
 
-func (s Set[E]) Clone() Set[E] {
+func (s Unordered[E]) Clone() Unordered[E] {
 	return FromMap(s)
 }
 
-func (s Set[E]) subset(other Set[E], proper bool) bool {
+func (s Unordered[E]) subset(other Unordered[E], proper bool) bool {
 	if len(s) > len(other) || proper && len(s) == len(other) {
 		return false
 	}
@@ -146,23 +146,23 @@ func (s Set[E]) subset(other Set[E], proper bool) bool {
 }
 
 // Subset returns true if s is a subset of other.
-func (s Set[E]) Subset(other Set[E]) bool {
+func (s Unordered[E]) Subset(other Unordered[E]) bool {
 	return s.subset(other, false)
 }
 
 // ProperSubset returns true if s is a proper subset of other.
 // A proper subset is a subset that is not equal to the other set.
-func (s Set[E]) ProperSubset(other Set[E]) bool {
+func (s Unordered[E]) ProperSubset(other Unordered[E]) bool {
 	return s.subset(other, true)
 }
 
 // Superset returns true if s is a superset of other.
-func (s Set[E]) Superset(other Set[E]) bool {
+func (s Unordered[E]) Superset(other Unordered[E]) bool {
 	return other.Subset(s)
 }
 
 // ProperSuperset returns true if s is a proper superset of other.
 // A proper superset is a superset that is not equal to the other set.
-func (s Set[E]) ProperSuperset(other Set[E]) bool {
+func (s Unordered[E]) ProperSuperset(other Unordered[E]) bool {
 	return other.ProperSubset(s)
 }
