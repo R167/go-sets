@@ -32,7 +32,7 @@ func BenchmarkIntersection(b *testing.B) {
 			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
 				s1, s2 = s2, s1
-				s1.Intersect(s2)
+				s1.Intersection(s2)
 			}
 		})
 	}

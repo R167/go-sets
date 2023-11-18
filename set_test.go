@@ -21,9 +21,9 @@ func assertEqual[E any, A any](t *testing.T, expected E, actual A) {
 func TestNew(t *testing.T) {
 	s := sets.New[int](1, 2, 3)
 	assertEqual(t, 3, len(s))
-	assertEqual(t, true, s.Contains(1))
-	assertEqual(t, true, s.Contains(2))
-	assertEqual(t, true, s.Contains(3))
+	assertEqual(t, true, s.Has(1))
+	assertEqual(t, true, s.Has(2))
+	assertEqual(t, true, s.Has(3))
 }
 
 func TestFromMap(t *testing.T) {
@@ -35,28 +35,28 @@ func TestFromMap(t *testing.T) {
 	assertEqual(t, ref, s)
 }
 
-func TestSet_Add(t *testing.T) {
+func TestSet_Insert(t *testing.T) {
 	s := sets.New[int](1, 2, 3)
-	s.Add(4)
+	s.Insert(4)
 	assertEqual(t, 4, len(s))
-	assertEqual(t, true, s.Contains(4))
-	s.Add(4)
+	assertEqual(t, true, s.Has(4))
+	s.Insert(4)
 	assertEqual(t, 4, len(s))
 }
 
-func TestSet_Remove(t *testing.T) {
+func TestSet_Delete(t *testing.T) {
 	s := sets.New[int](1, 2, 3)
-	assertEqual(t, true, s.Remove(2))
+	assertEqual(t, true, s.Delete(2))
 	assertEqual(t, 2, len(s))
-	assertEqual(t, false, s.Remove(2))
+	assertEqual(t, false, s.Delete(2))
 	assertEqual(t, 2, len(s))
-	assertEqual(t, false, s.Contains(2))
+	assertEqual(t, false, s.Has(2))
 }
 
-func TestSet_Contains(t *testing.T) {
+func TestSet_Has(t *testing.T) {
 	s := sets.New[int](1, 2, 3)
-	assertEqual(t, true, s.Contains(2))
-	assertEqual(t, false, s.Contains(4))
+	assertEqual(t, true, s.Has(2))
+	assertEqual(t, false, s.Has(4))
 }
 
 func TestSet_Union(t *testing.T) {
@@ -66,11 +66,11 @@ func TestSet_Union(t *testing.T) {
 	assertEqual(t, sets.New[int](1, 2, 3, 4, 5, 6), other.Union(s))
 }
 
-func TestSet_Intersect(t *testing.T) {
+func TestSet_Intersection(t *testing.T) {
 	s := sets.New[int](1, 2, 3)
 	other := sets.New[int](3, 4, 5, 6)
-	assertEqual(t, sets.New[int](3), s.Intersect(other))
-	assertEqual(t, sets.New[int](3), other.Intersect(s))
+	assertEqual(t, sets.New[int](3), s.Intersection(other))
+	assertEqual(t, sets.New[int](3), other.Intersection(s))
 }
 
 func TestSet_Equal(t *testing.T) {
@@ -80,7 +80,7 @@ func TestSet_Equal(t *testing.T) {
 
 	s2 := s.Clone()
 	assertEqual(t, true, s.Equal(s2))
-	s2.Add(9)
+	s2.Insert(9)
 	assertEqual(t, false, s.Equal(s2))
 }
 
@@ -89,4 +89,10 @@ func TestSet_Difference(t *testing.T) {
 	other := sets.New[int](3, 4, 5)
 	assertEqual(t, sets.New[int](1, 2), s.Difference(other))
 	assertEqual(t, sets.New[int](4, 5), other.Difference(s))
+}
+
+func TestSetCasting(t *testing.T) {
+	s := sets.New[string]()
+	m := map[string]struct{}(s)
+	_ = m
 }

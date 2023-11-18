@@ -2,17 +2,19 @@ package sets
 
 import "fmt"
 
+type empty = struct{}
+
 // Unordered is a set of comparable elements of type E. Note since Unordered is backed by a map,
 // the zero value of Unordered is not an empty set. Use New[E]() to create an empty set.
 //
 // Unordered is not thread-safe.
-type Unordered[E comparable] map[E]struct{}
+type Unordered[E comparable] map[E]empty
 
 // New returns a new set containing the given elements.
 func New[E comparable](elements ...E) Unordered[E] {
 	s := make(Unordered[E], len(elements))
 	for _, e := range elements {
-		s[e] = struct{}{}
+		s[e] = empty{}
 	}
 	return s
 }
@@ -21,18 +23,20 @@ func New[E comparable](elements ...E) Unordered[E] {
 func FromMap[E comparable, T any, M ~map[E]T](m M) Unordered[E] {
 	s := make(Unordered[E], len(m))
 	for e := range m {
-		s[e] = struct{}{}
+		s[e] = empty{}
 	}
 	return s
 }
 
-// Add adds the given element to s.
-func (s Unordered[E]) Add(e E) {
-	s[e] = struct{}{}
+// Insert adds the given element to s.
+func (s Unordered[E]) Insert(e ...E) {
+	for _, e := range e {
+		s[e] = empty{}
+	}
 }
 
-// Remove removes the given element from s. Returns true if the element was in s.
-func (s Unordered[E]) Remove(e E) bool {
+// Delete removes the given element from s. Returns true if the element was in s.
+func (s Unordered[E]) Delete(e E) bool {
 	if _, ok := s[e]; ok {
 		delete(s, e)
 		return true
@@ -40,8 +44,8 @@ func (s Unordered[E]) Remove(e E) bool {
 	return false
 }
 
-// Contains returns true if e is in s.
-func (s Unordered[E]) Contains(e E) bool {
+// Has returns true if e is in s.
+func (s Unordered[E]) Has(e E) bool {
 	_, ok := s[e]
 	return ok
 }
@@ -58,25 +62,25 @@ func (s Unordered[E]) Union(other Unordered[E]) Unordered[E] {
 	}
 	union := FromMap(other)
 	for e := range s {
-		union.Add(e)
+		union.Insert(e)
 	}
 	return union
 }
 
-// Intersect returns a new set containing the elements in both s and other.
+// Intersection returns a new set containing the elements in both s and other.
 //
 //	s := New[int](1, 2, 3)
 //	other := New[int](3, 4, 5)
-//	intersection := s.Intersect(other)
+//	intersection := s.Intersection(other)
 //	// intersection contains 3
-func (s Unordered[E]) Intersect(other Unordered[E]) Unordered[E] {
+func (s Unordered[E]) Intersection(other Unordered[E]) Unordered[E] {
 	if len(s) > len(other) {
 		s, other = other, s
 	}
 	intersection := make(Unordered[E])
 	for e := range s {
-		if other.Contains(e) {
-			intersection.Add(e)
+		if other.Has(e) {
+			intersection.Insert(e)
 		}
 	}
 	return intersection
@@ -93,8 +97,8 @@ func (s Unordered[E]) Intersect(other Unordered[E]) Unordered[E] {
 func (s Unordered[E]) Difference(other Unordered[E]) Unordered[E] {
 	difference := New[E]()
 	for e := range s {
-		if !other.Contains(e) {
-			difference.Add(e)
+		if !other.Has(e) {
+			difference.Insert(e)
 		}
 	}
 	return difference
@@ -106,7 +110,7 @@ func (s Unordered[E]) Equal(other Unordered[E]) bool {
 		return false
 	}
 	for e := range s {
-		if !other.Contains(e) {
+		if !other.Has(e) {
 			return false
 		}
 	}
@@ -133,12 +137,12 @@ func (s Unordered[E]) Clone() Unordered[E] {
 	return FromMap(s)
 }
 
-func (s Unordered[E]) subset(other Unordered[E], proper bool) bool {
-	if len(s) > len(other) || proper && len(s) == len(other) {
+func (s Unordered[E]) subset(other Unordered[E]) bool {
+	if len(s) > len(other) {
 		return false
 	}
 	for e := range s {
-		if !other.Contains(e) {
+		if !other.Has(e) {
 			return false
 		}
 	}
@@ -147,22 +151,10 @@ func (s Unordered[E]) subset(other Unordered[E], proper bool) bool {
 
 // Subset returns true if s is a subset of other.
 func (s Unordered[E]) Subset(other Unordered[E]) bool {
-	return s.subset(other, false)
-}
-
-// ProperSubset returns true if s is a proper subset of other.
-// A proper subset is a subset that is not equal to the other set.
-func (s Unordered[E]) ProperSubset(other Unordered[E]) bool {
-	return s.subset(other, true)
+	return s.subset(other)
 }
 
 // Superset returns true if s is a superset of other.
 func (s Unordered[E]) Superset(other Unordered[E]) bool {
 	return other.Subset(s)
-}
-
-// ProperSuperset returns true if s is a proper superset of other.
-// A proper superset is a superset that is not equal to the other set.
-func (s Unordered[E]) ProperSuperset(other Unordered[E]) bool {
-	return other.ProperSubset(s)
 }

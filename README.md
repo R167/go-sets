@@ -8,9 +8,7 @@ Supported set operations:
 
 Supported checks:
 - Subset: A⊆B
-- Proper subset: A⊂B
 - Superset: A⊇B
-- Proper superset: A⊃B
 - Equality: A=B
 
 ## Usage
@@ -33,8 +31,7 @@ func main() {
 
   a2 := sets.New(1, 2)
   fmt.Println(a2.Subset(a)) // true
-  fmt.Println(a2.ProperSubset(a)) // true
-  fmt.Println(a.Subset(a)) // false
+  fmt.Println(a.Subset(a2)) // false
   fmt.Println(a.Equal(b)) // false
 }
 ```
