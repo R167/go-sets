@@ -1,7 +1,7 @@
 # Go Sets!
 A minimal set library for golang. This tinylib eschews any dependencies and implements common, optimized set operations on `type Set[E comparable] map[E]struct{}`
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/R167/go-sets.svg)](https://pkg.go.dev/github.com/R167/go-sets) [![Go Report Card](https://goreportcard.com/badge/github.com/R167/go-sets)](https://goreportcard.com/report/github.com/R167/go-sets)
+[![Go Reference](https://pkg.go.dev/badge/github.com/R167/go-sets.svg)](https://pkg.go.dev/github.com/R167/go-sets) [![Go Report Card](https://goreportcard.com/badge/github.com/R167/go-sets)](https://goreportcard.com/report/github.com/R167/go-sets) [![CI](https://github.com/R167/go-sets/actions/workflows/ci.yaml/badge.svg)](https://github.com/R167/go-sets/actions/workflows/ci.yaml)
 
 Supported set operations:
 - Union: A⋃B
