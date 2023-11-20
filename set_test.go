@@ -37,10 +37,10 @@ func TestFromMap(t *testing.T) {
 
 func TestSet_Insert(t *testing.T) {
 	s := sets.New[int](1, 2, 3)
-	s.Insert(4)
+	s.Add(4)
 	assertEqual(t, 4, len(s))
 	assertEqual(t, true, s.Has(4))
-	s.Insert(4)
+	s.Add(4)
 	assertEqual(t, 4, len(s))
 }
 
@@ -80,7 +80,7 @@ func TestSet_Equal(t *testing.T) {
 
 	s2 := s.Clone()
 	assertEqual(t, true, s.Equal(s2))
-	s2.Insert(9)
+	s2.Add(9)
 	assertEqual(t, false, s.Equal(s2))
 }
 

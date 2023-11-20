@@ -1,0 +1,23 @@
+name: "CI"
+on:
+  push:
+  pull_request:
+  schedule: # Run CI every Monday at 10:00 UTC
+    - cron: "0 10 * * 1"
+
+jobs:
+  ci:
+    name: "Run CI"
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest"]
+        go: ["stable", "oldstable"]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-go@v4
+      with:
+        go-version: ${{ matrix.go }}
+    - run: "go vet ./..."
+    - run: "go test -vet=off ./..."

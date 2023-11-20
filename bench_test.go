@@ -51,3 +51,15 @@ func BenchmarkUnion(b *testing.B) {
 		})
 	}
 }
+
+func BenchmarkSlice(b *testing.B) {
+	for _, split := range splits {
+		s := makeSet(split.b)
+		b.Run(fmt.Sprintf("%d-Slice", len(s)), func(b *testing.B) {
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				s.Slice()
+			}
+		})
+	}
+}
